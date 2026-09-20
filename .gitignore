@@ -8,3 +8,5 @@ data/processed/
 models/*.pkl
 models/*.joblib
 .streamlit/secrets.toml
+
+data/*.duckdb

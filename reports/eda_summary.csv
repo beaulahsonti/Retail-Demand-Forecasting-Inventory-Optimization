@@ -1,0 +1,15 @@
+metric,value
+rows,248690
+columns,9
+unique_products,13
+unique_departments,7
+unique_categories,3
+unique_stores,10
+unique_states,3
+total_demand,187908
+average_demand,0.755591298403635
+median_demand,0.0
+zero_demand_records,172620
+zero_demand_percentage,69.41171739917166
+start_date,2011-01-02
+end_date,2016-03-28
