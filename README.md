@@ -30,15 +30,15 @@ The project is designed as a complete retail demand forecasting and inventory op
 
 The main objective is to use historical retail demand data to:
 
-1. Understand demand patterns.
-2. Identify product, category, and store-level demand behavior.
-3. Create useful forecasting features.
-4. Forecast future demand.
-5. Compare different forecasting approaches.
-6. Calculate safety stock requirements.
-7. Calculate reorder points.
-8. Recommend appropriate inventory levels.
-9. Provide analytical results through SQL and a dashboard.
+1. Understand demand patterns
+2. Identify product, category, and store-level demand behavior
+3. Create useful forecasting features
+4. Forecast future demand
+5. Compare different forecasting approaches
+6. Calculate safety stock requirements
+7. Calculate reorder points
+8. Recommend appropriate inventory levels
+9. Provide analytical results through SQL and an interactive dashboard
 
 ---
 
@@ -81,10 +81,10 @@ The main objective is to use historical retail demand data to:
 ### Data Storage
 
 - CSV
-- Excel-compatible data processing
 - DuckDB database
+- Excel-compatible data processing
 
-### Model / Utility
+### Utilities
 
 - Joblib
 - OpenPyXL
@@ -95,7 +95,7 @@ The main objective is to use historical retail demand data to:
 
 The project uses sampled retail demand data based on the M5-style retail forecasting dataset.
 
-### Raw files
+### Raw Files
 
 ```text
 data/raw/
