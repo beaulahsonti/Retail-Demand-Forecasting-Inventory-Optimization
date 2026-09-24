@@ -1176,6 +1176,66 @@ st.markdown(
             }
         }
 
+        /* =========================================================
+           TABLET KPI PRESENTATION — 768px TO 1199px
+           Only KPI cards are adjusted here. Keep the existing mobile
+           rules below/above intact. Tablet cards use the same polished
+           centered presentation as desktop while retaining the existing
+           two-column responsive grid and gaps.
+           ========================================================= */
+        @media (min-width: 768px) and (max-width: 1199px) {
+            [data-testid="stHorizontalBlock"]:has(.kpi-card) {
+                grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+                gap: 18px !important;
+                row-gap: 18px !important;
+                column-gap: 18px !important;
+            }
+
+            [data-testid="stHorizontalBlock"]:has(.kpi-card) .kpi-card {
+                min-height: 156px !important;
+                height: 156px !important;
+                padding: 1rem 0.9rem !important;
+                align-items: center !important;
+                justify-content: center !important;
+                text-align: center !important;
+                border-radius: 16px !important;
+                clip-path: inset(0 round 16px) !important;
+            }
+
+            [data-testid="stHorizontalBlock"]:has(.kpi-card) .kpi-icon {
+                width: 40px !important;
+                height: 40px !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                margin-bottom: 0.55rem !important;
+                font-size: 1.08rem !important;
+            }
+
+            [data-testid="stHorizontalBlock"]:has(.kpi-card) .kpi-label {
+                width: 100% !important;
+                text-align: center !important;
+                font-size: 0.84rem !important;
+                line-height: 1.28 !important;
+                letter-spacing: 0.035em !important;
+            }
+
+            [data-testid="stHorizontalBlock"]:has(.kpi-card) .kpi-value {
+                width: 100% !important;
+                text-align: center !important;
+                font-size: 1.95rem !important;
+                line-height: 1.12 !important;
+                margin-top: 0.22rem !important;
+            }
+
+            [data-testid="stHorizontalBlock"]:has(.kpi-card) .kpi-helper {
+                width: 100% !important;
+                text-align: center !important;
+                font-size: 0.74rem !important;
+                line-height: 1.25 !important;
+                margin-top: 0.3rem !important;
+            }
+        }
+
         /* At no breakpoint may the KPI grid/column wrappers clip the
            rounded corners or hide the card's lower text. */
         [data-testid="stHorizontalBlock"]:has(.kpi-card),
