@@ -3,3 +3,7 @@ __pycache__/
 *.pyc
 .env
 .ipynb_checkpoints/
+# Raw dataset files
+data/raw/*.csv
+retail_dataset_files/
+*.zip
