@@ -236,3 +236,104 @@ SELECT
     COUNT_IF(STORE_ID IS NULL) AS NULL_STORE_ID,
     COUNT_IF(STATE_ID IS NULL) AS NULL_STATE_ID
 FROM RETAIL_DEMAND.PUBLIC.RAW_SALES_TRAIN_VALIDATION;
+
+-- ============================================================
+-- 12. CHECK SALES VALUES FOR NULL AND NEGATIVE VALUES
+-- ============================================================
+-- Objective:
+-- Check whether the raw sales data contains NULL or negative
+-- sales values.
+--
+-- Why:
+-- Sales quantities should not be negative.
+-- NULL values indicate missing observations.
+--
+-- ============================================================
+
+SELECT
+    COUNT(*) AS TOTAL_SALES_RECORDS,
+
+    COUNT_IF(SALES IS NULL) AS NULL_SALES,
+
+    COUNT_IF(SALES < 0) AS NEGATIVE_SALES,
+
+    MIN(SALES) AS MIN_SALES,
+
+    MAX(SALES) AS MAX_SALES
+
+FROM RETAIL_DEMAND.PUBLIC.RAW_SALES_TRAIN_VALIDATION
+UNPIVOT (
+    SALES FOR DAY_ID IN (
+        D_1, D_2, D_3, D_4, D_5
+    )
+);
+
+-- ============================================================
+-- 13. GENERATE COMPLETE UNPIVOT COLUMN LIST
+-- ============================================================
+-- Objective:
+-- Generate the complete list of daily sales columns required
+-- for the UNPIVOT transformation.
+--
+-- Expected result:
+-- D_1, D_2, D_3, ... D_1913
+--
+-- Why:
+-- The raw M5 sales table stores each day as a separate column.
+-- We need the complete list to convert the wide sales data
+-- into long format.
+-- ============================================================
+
+SELECT
+    LISTAGG(COLUMN_NAME, ', ')
+        WITHIN GROUP (ORDER BY ORDINAL_POSITION) AS DAY_COLUMNS
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'PUBLIC'
+  AND TABLE_NAME = 'RAW_SALES_TRAIN_VALIDATION'
+  AND REGEXP_LIKE(COLUMN_NAME, '^D_[0-9]+$');
+
+  -- ============================================================
+-- 14. GENERATE FULL UNPIVOT SQL
+-- ============================================================
+
+SELECT
+    'SELECT ID, ITEM_ID, DEPT_ID, CAT_ID, STORE_ID, STATE_ID, DAY_ID, SALES
+FROM RETAIL_DEMAND.PUBLIC.RAW_SALES_TRAIN_VALIDATION
+UNPIVOT (
+    SALES FOR DAY_ID IN (' ||
+    LISTAGG(COLUMN_NAME, ', ')
+        WITHIN GROUP (ORDER BY ORDINAL_POSITION)
+    || ')
+);' AS UNPIVOT_QUERY
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'PUBLIC'
+  AND TABLE_NAME = 'RAW_SALES_TRAIN_VALIDATION'
+  AND REGEXP_LIKE(COLUMN_NAME, '^D_[0-9]+$');
+
+  -- ============================================================
+-- 15. FULL SALES DATA QUALITY CHECK
+-- ============================================================
+-- Objective:
+-- Check NULL, negative, minimum, and maximum sales values
+-- across all 1,913 days.
+--
+-- Why:
+-- The previous check covered only D_1 to D_5.
+-- This checks the complete sales history.
+-- ============================================================
+
+SELECT
+    COUNT(*) AS TOTAL_SALES_RECORDS,
+    COUNT_IF(SALES IS NULL) AS NULL_SALES,
+    COUNT_IF(SALES < 0) AS NEGATIVE_SALES,
+    MIN(SALES) AS MIN_SALES,
+    MAX(SALES) AS MAX_SALES
+
+FROM RETAIL_DEMAND.PUBLIC.RAW_SALES_TRAIN_VALIDATION
+
+UNPIVOT (
+    SALES FOR DAY_ID IN (
+        D_1, D_2, D_3
+        -- paste the complete D_1 → D_1913 list here
+    )
+);
