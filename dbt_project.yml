@@ -1,0 +1,30 @@
+# Master Configuration Profile for Retail Demand Forecasting Analytics Marts
+name: 'zaalima_retail_forecasting'
+version: '1.0.0'
+config-version: 2
+
+# Connects the project structure to your local execution target profile mapping
+profile: 'zaalima_retail'
+
+# Directs dbt's environment pointers to target workspace directories
+model-paths: ["src_dbt/models"]
+analysis-paths: ["src_dbt/analyses"]
+test-paths: ["src_dbt/tests"]
+seed-paths: ["src_dbt/seeds"]
+macro-paths: ["src_dbt/macros"]
+snapshot-paths: ["src_dbt/snapshots"]
+
+target-path: "src_dbt/target"
+clean-targets:
+  - "src_dbt/target"
+  - "src_dbt/dbt_packages"
+
+# Configures how models will compile inside your database staging warehouse
+models:
+  zaalima_retail_forecasting:
+    # Staging models will compile as high-performance temporary relational views
+    staging:
+      +materialized: view
+    # Analytical data marts will compile as full physical tables for ML model efficiency
+    marts:
+      +materialized: table
