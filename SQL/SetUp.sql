@@ -337,3 +337,103 @@ UNPIVOT (
         -- paste the complete D_1 → D_1913 list here
     )
 );
+
+SELECT
+    'CREATE OR REPLACE TABLE RETAIL_DEMAND.PUBLIC.SALES_LONG AS
+SELECT
+    ID,
+    ITEM_ID,
+    DEPT_ID,
+    CAT_ID,
+    STORE_ID,
+    STATE_ID,
+    DAY_ID,
+    SALES
+FROM RETAIL_DEMAND.PUBLIC.RAW_SALES_TRAIN_VALIDATION
+UNPIVOT INCLUDE NULLS (
+    SALES FOR DAY_ID IN (' ||
+    LISTAGG(COLUMN_NAME, ', ')
+        WITHIN GROUP (ORDER BY ORDINAL_POSITION)
+    || ')
+);' AS CREATE_LONG_TABLE_QUERY
+FROM INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'PUBLIC'
+  AND TABLE_NAME = 'RAW_SALES_TRAIN_VALIDATION'
+  AND REGEXP_LIKE(COLUMN_NAME, '^D_[0-9]+$');
+
+SELECT CURRENT_DATABASE(), CURRENT_SCHEMA(), CURRENT_ROLE();
+SHOW TABLES IN SCHEMA RETAIL_DEMAND.PUBLIC;
+
+-- ============================================================
+-- 16. TEST LONG-FORMAT SALES TABLE CREATION
+-- ============================================================
+-- Objective:
+-- Verify that the UNPIVOT transformation can be used to create
+-- a new long-format table successfully.
+--
+-- Why:
+-- The full transformation contains 1,913 daily columns.
+-- We first test the table-creation logic using five days
+-- before running the complete transformation.
+--
+-- ============================================================
+
+CREATE OR REPLACE TABLE RETAIL_DEMAND.PUBLIC.SALES_LONG_TEST AS
+
+SELECT
+    ID,
+    ITEM_ID,
+    DEPT_ID,
+    CAT_ID,
+    STORE_ID,
+    STATE_ID,
+    DAY_ID,
+    SALES
+FROM RETAIL_DEMAND.PUBLIC.RAW_SALES_TRAIN_VALIDATION
+
+UNPIVOT INCLUDE NULLS (
+    SALES FOR DAY_ID IN (
+        D_1,
+        D_2,
+        D_3,
+        D_4,
+        D_5
+    )
+);
+
+SELECT COUNT(*) AS TOTAL_ROWS
+FROM RETAIL_DEMAND.PUBLIC.SALES_LONG_TEST;
+
+-- ============================================================
+-- 17. GENERATE COMPLETE SALES_LONG CREATION QUERY
+-- ============================================================
+
+SELECT
+    'CREATE OR REPLACE TABLE RETAIL_DEMAND.PUBLIC.SALES_LONG AS
+SELECT
+    ID,
+    ITEM_ID,
+    DEPT_ID,
+    CAT_ID,
+    STORE_ID,
+    STATE_ID,
+    DAY_ID,
+    SALES
+FROM RETAIL_DEMAND.PUBLIC.RAW_SALES_TRAIN_VALIDATION
+UNPIVOT INCLUDE NULLS (
+    SALES FOR DAY_ID IN (' ||
+    LISTAGG(
+        COLUMN_NAME,
+        ', '
+    ) WITHIN GROUP (
+        ORDER BY ORDINAL_POSITION
+    ) ||
+    ')
+);' AS CREATE_QUERY
+FROM RETAIL_DEMAND.INFORMATION_SCHEMA.COLUMNS
+WHERE TABLE_SCHEMA = 'PUBLIC'
+  AND TABLE_NAME = 'RAW_SALES_TRAIN_VALIDATION'
+  AND REGEXP_LIKE(COLUMN_NAME, '^D_[0-9]+$');
+
+  SELECT COUNT(*) AS TOTAL_ROWS
+FROM RETAIL_DEMAND.PUBLIC.SALES_LONG;
