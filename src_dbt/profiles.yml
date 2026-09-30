@@ -1,0 +1,11 @@
+zaalima_retail:
+  outputs:
+    dev:
+      type: duckdb
+      threads: 4
+      path: 'zaalima_warehouse.duckdb'
+      # Configures direct relational connection hooks to map your SQLite schemas
+      attach:
+        - path: "../src_etl/retail_warehouse.db"
+          alias: "src_sqlite"
+  target: dev
