@@ -11,3 +11,6 @@ data/raw/sales_long.csv
 # DuckDB local database
 *.duckdb
 *.duckdb.wal
+# BigQuery / dbt credentials
+.env
+*.json

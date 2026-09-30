@@ -1,0 +1,15 @@
+name: retail_demand_forecasting
+version: "1.0.0"
+config-version: 2
+
+profile: retail_demand_forecasting
+
+model-paths: ["models"]
+
+models:
+  retail_demand_forecasting:
+    staging:
+      +materialized: view
+
+    marts:
+      +materialized: table
