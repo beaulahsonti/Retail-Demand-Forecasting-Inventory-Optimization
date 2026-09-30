@@ -1,0 +1,4 @@
+model,MAE,RMSE
+Baseline (7-day lag),15.5807,26.7332
+Prophet,40.4764,54.752
+LightGBM,11.4525,19.7259
