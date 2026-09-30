@@ -406,7 +406,7 @@ if not model_comparison.empty:
 
         st.dataframe(
             model_comparison,
-            use_container_width=True,
+            width="stretch",
             hide_index=True
         )
 
@@ -557,7 +557,6 @@ display_columns = [
     "recommended_inventory",
     "inventory_priority"
 ]
-
 display_df = (
     filtered_inventory
     .sort_values(
@@ -570,11 +569,9 @@ display_df = (
 
 st.dataframe(
     display_df,
-    use_container_width=True,
-    hide_index=True
+    hide_index=True,
+    width="stretch"
 )
-
-
 # ============================================================
 # FOOTER
 # ============================================================
