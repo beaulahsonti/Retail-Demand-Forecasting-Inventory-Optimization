@@ -8,3 +8,6 @@ data/raw/*.csv
 retail_dataset_files/
 *.zip
 data/raw/sales_long.csv
+# DuckDB local database
+*.duckdb
+*.duckdb.wal
