@@ -437,3 +437,135 @@ WHERE TABLE_SCHEMA = 'PUBLIC'
 
   SELECT COUNT(*) AS TOTAL_ROWS
 FROM RETAIL_DEMAND.PUBLIC.SALES_LONG;
+
+DECLARE
+    DAY_COLUMNS VARCHAR;
+    CREATE_SQL VARCHAR;
+BEGIN
+
+    SELECT LISTAGG(COLUMN_NAME, ', ')
+           WITHIN GROUP (ORDER BY ORDINAL_POSITION)
+    INTO :DAY_COLUMNS
+    FROM RETAIL_DEMAND.INFORMATION_SCHEMA.COLUMNS
+    WHERE TABLE_SCHEMA = 'PUBLIC'
+      AND TABLE_NAME = 'RAW_SALES_TRAIN_VALIDATION'
+      AND REGEXP_LIKE(COLUMN_NAME, '^D_[0-9]+$');
+
+    CREATE_SQL :=
+        'CREATE OR REPLACE TABLE RETAIL_DEMAND.PUBLIC.SALES_LONG AS
+         SELECT
+             ID,
+             ITEM_ID,
+             DEPT_ID,
+             CAT_ID,
+             STORE_ID,
+             STATE_ID,
+             DAY_ID,
+             SALES
+         FROM RETAIL_DEMAND.PUBLIC.RAW_SALES_TRAIN_VALIDATION
+         UNPIVOT INCLUDE NULLS (
+             SALES FOR DAY_ID IN (' || DAY_COLUMNS || ')
+         )';
+
+    EXECUTE IMMEDIATE :CREATE_SQL;
+
+END;
+
+SELECT COUNT(*) AS TOTAL_ROWS
+FROM RETAIL_DEMAND.PUBLIC.SALES_LONG;
+
+-- ============================================================
+-- 18. VERIFY SALES_LONG TRANSFORMATION
+-- ============================================================
+-- Objective:
+-- Confirm that all 1,913 daily columns were converted into
+-- rows and that the DAY_ID range is complete.
+
+SELECT
+    MIN(DAY_ID) AS FIRST_DAY,
+    MAX(DAY_ID) AS LAST_DAY,
+    COUNT(DISTINCT DAY_ID) AS UNIQUE_DAYS
+FROM RETAIL_DEMAND.PUBLIC.SALES_LONG;
+
+SELECT *
+FROM RETAIL_DEMAND.PUBLIC.SALES_LONG
+LIMIT 10;
+
+
+SELECT DISTINCT DAY_ID
+FROM RETAIL_DEMAND.PUBLIC.SALES_LONG
+LIMIT 10;
+SELECT
+    D,
+    DATE
+FROM RETAIL_DEMAND.PUBLIC.RAW_CALENDAR
+LIMIT 10;
+
+SELECT
+    s.DAY_ID,
+    c.DATE,
+    c.WEEKDAY,
+    c.MONTH,
+    c.YEAR
+FROM RETAIL_DEMAND.PUBLIC.SALES_LONG AS s
+JOIN RETAIL_DEMAND.PUBLIC.RAW_CALENDAR AS c
+    ON LOWER(s.DAY_ID) = LOWER(c.D)
+LIMIT 10;
+
+SELECT
+    COUNT(*) AS UNMATCHED_ROWS
+FROM RETAIL_DEMAND.PUBLIC.SALES_LONG AS s
+LEFT JOIN RETAIL_DEMAND.PUBLIC.RAW_CALENDAR AS c
+    ON LOWER(s.DAY_ID) = LOWER(c.D)
+WHERE c.D IS NULL;
+
+-- ============================================================
+-- FINAL WEEK 1 TABLE: SALES WITH CALENDAR INFORMATION
+-- ============================================================
+-- Objective:
+-- Combine the transformed long-format sales data with the
+-- calendar information so that each sales record has its
+-- corresponding actual date and calendar attributes.
+--
+-- Why:
+-- SALES_LONG contains DAY_ID values such as D_1, D_2, etc.
+-- RAW_CALENDAR maps these day IDs to actual dates and provides
+-- useful time-related features such as weekday, month, year,
+-- events, and SNAP indicators.
+--
+-- The LOWER() function is used because:
+-- SALES_LONG.DAY_ID = D_1
+-- RAW_CALENDAR.D   = d_1
+-- Snowflake string comparisons are case-sensitive.
+--
+-- Expected row count:
+-- 58,327,370
+
+CREATE OR REPLACE TABLE RETAIL_DEMAND.PUBLIC.SALES_WITH_CALENDAR AS
+SELECT
+    s.ID,
+    s.ITEM_ID,
+    s.DEPT_ID,
+    s.CAT_ID,
+    s.STORE_ID,
+    s.STATE_ID,
+    s.DAY_ID,
+    c.DATE,
+    s.SALES,
+    c.WEEKDAY,
+    c.WDAY,
+    c.MONTH,
+    c.YEAR,
+    c.EVENT_NAME_1,
+    c.EVENT_TYPE_1,
+    c.EVENT_NAME_2,
+    c.EVENT_TYPE_2,
+    c.SNAP_CA,
+    c.SNAP_TX,
+    c.SNAP_WI
+FROM RETAIL_DEMAND.PUBLIC.SALES_LONG AS s
+LEFT JOIN RETAIL_DEMAND.PUBLIC.RAW_CALENDAR AS c
+    ON LOWER(s.DAY_ID) = LOWER(c.D);
+
+    SELECT COUNT(*)
+FROM RETAIL_DEMAND.PUBLIC.SALES_WITH_CALENDAR;
