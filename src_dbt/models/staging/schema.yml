@@ -1,0 +1,27 @@
+version: 2
+
+models:
+  - name: stg_calendar
+    description: "Sanitized and standardized time-series calendar dimension table mapping Walmart dates."
+    columns:
+      - name: date_day_id
+        description: "Primary key identifier for the specific day index (e.g., d_1)."
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_prices
+    description: "Sanitized item selling prices mapping items across specific store locations by week."
+    columns:
+      - name: item_sell_price
+        description: "The item sell price value matrix vector float."
+        tests:
+          - not_null
+
+  - name: stg_sales
+    description: "Unpivoted time-series transactional historical store sales volume matrices."
+    columns:
+      - name: long_series_id
+        description: "Unique string key concatenating item, department, category, store, and state identifiers."
+        tests:
+          - not_null
