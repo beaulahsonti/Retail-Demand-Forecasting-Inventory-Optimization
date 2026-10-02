@@ -1,0 +1,25 @@
+version: 2
+
+models:
+  - name: fct_daily_retail_sales
+    description: "Master unified time-series analytics data mart unpivoting transactional daily rows and joining item pricing, calendars, and structural dimension profiles."
+    columns:
+      - name: store_id
+        description: "Unique warehouse identification key for the localized Walmart retail store branch."
+        tests:
+          - not_null
+
+      - name: item_id
+        description: "Unique structural product identification key mapping tracking target merchandise."
+        tests:
+          - not_null
+
+      - name: daily_sales_units
+        description: "The historical scalar record count tracking total product items sold on this calendar date."
+        tests:
+          - not_null
+
+      - name: daily_gross_revenue_usd
+        description: "Calculated yield index computing total daily sales units multiplied by item selling price vectors."
+        tests:
+          - not_null
