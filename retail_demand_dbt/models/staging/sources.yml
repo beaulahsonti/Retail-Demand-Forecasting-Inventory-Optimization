@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: retail_demand
+    database: RETAIL_DEMAND
+    schema: PUBLIC
+
+    tables:
+      - name: sales_with_calendar
