@@ -1,0 +1,75 @@
+version: 2
+
+models:
+  - name: stg_sales_with_calendar
+
+    description: >
+      Staging model that standardizes the Week 1 curated sales and
+      calendar dataset into a clean analytical structure.
+      The model maintains one row per item-store-day observation.
+
+    columns:
+
+      - name: sales_id
+        description: "Identifier for the item-store sales series."
+        data_tests:
+          - not_null
+
+      - name: item_id
+        description: "Unique identifier of the product."
+
+      - name: department_id
+        description: "Department identifier associated with the product."
+
+      - name: category_id
+        description: "Category identifier associated with the product."
+
+      - name: store_id
+        description: "Identifier of the store where the sale occurred."
+
+      - name: state_id
+        description: "Identifier of the state where the store is located."
+
+      - name: day_id
+        description: "M5 calendar day identifier."
+
+      - name: sales_date
+        description: "Calendar date associated with the sales observation."
+        data_tests:
+          - not_null
+
+      - name: sales_units
+        description: "Number of units sold for the item-store-day."
+
+      - name: weekday_name
+        description: "Name of the weekday associated with the sales date."
+
+      - name: weekday_number
+        description: "Numeric representation of the weekday."
+
+      - name: month_number
+        description: "Month number extracted from the sales date."
+
+      - name: year_number
+        description: "Year extracted from the sales date."
+
+      - name: event_name_1
+        description: "Primary calendar event name, when applicable."
+
+      - name: event_type_1
+        description: "Primary calendar event type, when applicable."
+
+      - name: event_name_2
+        description: "Secondary calendar event name, when applicable."
+
+      - name: event_type_2
+        description: "Secondary calendar event type, when applicable."
+
+      - name: snap_ca
+        description: "SNAP availability indicator for California."
+
+      - name: snap_tx
+        description: "SNAP availability indicator for Texas."
+
+      - name: snap_wi
+        description: "SNAP availability indicator for Wisconsin."
