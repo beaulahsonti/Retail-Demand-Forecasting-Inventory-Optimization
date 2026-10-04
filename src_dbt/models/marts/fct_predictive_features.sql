@@ -1,7 +1,7 @@
 /*
-  Week 3: Day 1-3 Advanced Feature Engineering Data Mart
+  Week 3: Advanced Feature Engineering Data Mart
   Computes historical time-series lags and mathematical rolling averages
-  across product-store combinations to create the final ML training matrix.
+  across product-store combinations with clean null-initialization fallbacks.
 */
 
 WITH core_sales_mart AS (
@@ -37,27 +37,34 @@ time_series_features AS (
         daily_gross_revenue_usd,
 
         /* 
-          1. Time-Series Lag Variables
-          Pulls sales volume metrics from 1 day, 1 week, and 4 weeks ago
+          1. Time-Series Lag Variables with Safe Null Handling
+          Pulls sales volume metrics from 1, 7, and 28 days ago.
+          Coalesces edge-case start-of-series nulls safely to 0.
         */
-        LAG(daily_sales_units, 1) OVER (
-            PARTITION BY store_id, item_id 
-            ORDER BY walmart_year_week, weekday_number
+        COALESCE(
+            LAG(daily_sales_units, 1) OVER (
+                PARTITION BY store_id, item_id 
+                ORDER BY walmart_year_week, weekday_number
+            ), 0
         ) AS sales_lag_1d,
         
-        LAG(daily_sales_units, 7) OVER (
-            PARTITION BY store_id, item_id 
-            ORDER BY walmart_year_week, weekday_number
+        COALESCE(
+            LAG(daily_sales_units, 7) OVER (
+                PARTITION BY store_id, item_id 
+                ORDER BY walmart_year_week, weekday_number
+            ), 0
         ) AS sales_lag_7d,
         
-        LAG(daily_sales_units, 28) OVER (
-            PARTITION BY store_id, item_id 
-            ORDER BY walmart_year_week, weekday_number
+        COALESCE(
+            LAG(daily_sales_units, 28) OVER (
+                PARTITION BY store_id, item_id 
+                ORDER BY walmart_year_week, weekday_number
+            ), 0
         ) AS sales_lag_28d,
 
         /* 
           2. Mathematical Rolling Averages
-          Computes the mean sales demand over recent 7-day and 30-day windows
+          Computes the mean sales demand over recent 7-day and 30-day windows.
         */
         AVG(daily_sales_units) OVER (
             PARTITION BY store_id, item_id 

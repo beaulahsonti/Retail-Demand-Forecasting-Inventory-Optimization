@@ -23,3 +23,21 @@ models:
         description: "Calculated yield index computing total daily sales units multiplied by item selling price vectors."
         tests:
           - not_null
+  - name: fct_predictive_features
+    description: "Advanced machine learning feature matrix computing time-series partition lags and mathematical moving rolling averages across product hierarchies."
+    columns:
+      - name: sales_lag_1d
+        description: "Historical product sales volume volume metric from exactly 1 day ago."
+        tests:
+          - not_null
+
+      - name: sales_lag_7d
+        description: "Historical product sales volume volume metric from exactly 1 week ago."
+        tests:
+          - not_null
+
+      - name: sales_rolling_avg_7d
+        description: "Moving rolling mean sales demand velocity calculated over a trailing 7-day partition window."
+        tests:
+          - not_null
+
