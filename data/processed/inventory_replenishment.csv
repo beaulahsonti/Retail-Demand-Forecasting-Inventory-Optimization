@@ -1,0 +1,2 @@
+predicted_daily_demand,lead_time_days,lead_time_demand,safety_stock,reorder_point,estimated_current_inventory,recommended_order_quantity
+1.8530660342290375,4,7.41226413691615,15.566927560109153,22.979191697025303,0.0,22.979191697025303
