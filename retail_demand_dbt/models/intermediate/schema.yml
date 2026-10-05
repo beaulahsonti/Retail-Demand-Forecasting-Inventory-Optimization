@@ -1,0 +1,59 @@
+version: 2
+
+models:
+
+  - name: int_daily_sales
+    description: >
+      Clean daily-level sales dataset derived from the staging layer.
+      This model preserves the item-store-day grain and provides the
+      foundation for downstream demand aggregation and forecasting.
+
+    columns:
+
+      - name: sales_id
+        description: "Identifier for the item-store sales series."
+
+      - name: item_id
+        description: "Product identifier."
+
+      - name: department_id
+        description: "Department identifier associated with the product."
+
+      - name: category_id
+        description: "Category identifier associated with the product."
+
+      - name: store_id
+        description: "Store identifier where the product was sold."
+
+      - name: state_id
+        description: "State identifier associated with the store."
+
+      - name: day_id
+        description: "M5 calendar day identifier."
+
+      - name: sales_date
+        description: "Calendar date of the sales observation."
+
+      - name: sales_units
+        description: "Number of units sold for the item-store-day observation."
+
+      - name: event_name_1
+        description: "Primary calendar event name, when applicable."
+
+      - name: event_type_1
+        description: "Primary calendar event type, when applicable."
+
+      - name: event_name_2
+        description: "Secondary calendar event name, when applicable."
+
+      - name: event_type_2
+        description: "Secondary calendar event type, when applicable."
+
+      - name: snap_ca
+        description: "SNAP availability indicator for California."
+
+      - name: snap_tx
+        description: "SNAP availability indicator for Texas."
+
+      - name: snap_wi
+        description: "SNAP availability indicator for Wisconsin."

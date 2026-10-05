@@ -1,0 +1,92 @@
+version: 2
+
+models:
+
+  - name: fct_weekly_sales
+    description: >
+      Weekly sales fact table aggregated from the daily sales model.
+      The model provides item-store level weekly demand for demand
+      analysis, forecasting, and inventory planning.
+
+    columns:
+
+      - name: sales_id
+        description: "Identifier for the item-store sales series."
+
+      - name: item_id
+        description: "Product identifier."
+
+      - name: department_id
+        description: "Department identifier associated with the product."
+
+      - name: category_id
+        description: "Category identifier associated with the product."
+
+      - name: store_id
+        description: "Store identifier where the product was sold."
+
+      - name: state_id
+        description: "State identifier associated with the store."
+
+      - name: week_start_date
+        description: "Start date of the calendar week."
+
+      - name: first_sales_date
+        description: "First available sales date within the week."
+
+      - name: last_sales_date
+        description: "Last available sales date within the week."
+
+      - name: weekly_sales_units
+        description: "Total units sold for the item-store combination during the week."
+
+      - name: avg_daily_sales_units
+        description: "Average daily units sold during the available days in the week."
+
+      - name: selling_days
+        description: "Number of daily sales observations contributing to the weekly total."
+
+
+  - name: fct_monthly_sales
+    description: >
+      Monthly sales fact table aggregated from the daily sales model.
+      The model provides item-store level monthly demand for longer-term
+      demand analysis, forecasting, and inventory planning.
+
+    columns:
+
+      - name: sales_id
+        description: "Identifier for the item-store sales series."
+
+      - name: item_id
+        description: "Product identifier."
+
+      - name: department_id
+        description: "Department identifier associated with the product."
+
+      - name: category_id
+        description: "Category identifier associated with the product."
+
+      - name: store_id
+        description: "Store identifier where the product was sold."
+
+      - name: state_id
+        description: "State identifier associated with the store."
+
+      - name: month_start_date
+        description: "Start date of the calendar month."
+
+      - name: first_sales_date
+        description: "First available sales date within the month."
+
+      - name: last_sales_date
+        description: "Last available sales date within the month."
+
+      - name: monthly_sales_units
+        description: "Total units sold for the item-store combination during the month."
+
+      - name: avg_daily_sales_units
+        description: "Average daily units sold during the available days in the month."
+
+      - name: selling_days
+        description: "Number of daily sales observations contributing to the monthly total."
