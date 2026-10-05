@@ -41,3 +41,10 @@ models:
         tests:
           - not_null
 
+  - name: fct_ml_training_matrix
+    description: "Finalized machine learning model feature matrix complete with time-series lags, moving rolling averages, and logarithmic target variance transformations."
+    columns:
+      - name: log_daily_sales_units
+        description: "The log-transformed historical demand metric variable target tracking ln(x + 1)."
+        tests:
+          - not_null
