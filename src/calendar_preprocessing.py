@@ -3,6 +3,8 @@ import pandas as pd
 INPUT_PATH = "data/raw/calendar.csv"
 OUTPUT_PATH = "data/raw/calendar_processed.csv"
 
+# Keep state-specific SNAP flags intact for downstream state-level modeling.
+
 
 def main():
     print("Loading calendar data...")
