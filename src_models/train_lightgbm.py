@@ -4,28 +4,54 @@ import numpy as np
 import lightgbm as lgb
 import os
 
-def initialize_ml_pipeline(db_path="src_dbt/zaalima_warehouse.duckdb"):
+def run_baseline_training(db_path="src_dbt/zaalima_warehouse.duckdb", model_dir="src_models/registry"):
     """
-    Week 4: Day 1 Machine Learning Infrastructure.
-    Safely connects to the DuckDB analytics feature mart, extracts the 
-    pre-scaled logarithmic target training matrix, and initializes
-    the LightGBM predictive modeling hyperparameter framework.
+    Week 4: Day 2 - Memory-Optimized Baseline LightGBM Model Training.
+    Extracts a high-value validation chunk from the data mart to prevent 
+    RAM allocation failures, splits chronologically, and exports the model binary.
     """
-    print("?? Initializing High-Performance LightGBM Forecasting Engine...")
+    print("?? Booting Memory-Optimized Production Baseline LightGBM Pipeline...")
+    
+    # Ensure local directory structures are ready
+    os.makedirs(model_dir, exist_ok=True)
     
     if not os.path.exists(db_path):
-        print(f"? Blocker: Compiled DuckDB database not found at {db_path}. Run dbt compilation first.")
+        print(f"? Blocker: Database not found at {db_path}. Run dbt models first.")
         return
 
-    print("?? Connecting to DuckDB training matrix layers...")
+    # 1. Connect natively to the DuckDB data mart layer
+    print("?? Extracting optimized ML training matrices from DuckDB features...")
     conn = duckdb.connect(db_path)
     
     try:
-        query = "SELECT * FROM main.fct_ml_training_matrix LIMIT 1000;"
+        # ?? SOLUTION: Limit the initial extraction size to prevent RAM overflow during the baseline test loop
+        query = "SELECT * FROM main.fct_ml_training_matrix LIMIT 100000;"
         df = conn.execute(query).fetchdf()
-        print(f"? Data mart data extracted successfully. Staging shape matrix: {df.shape}")
+        print(f"? Data mart extracted successfully. Optimized records shape: {df.shape}")
 
-        print("?? Mapping hyperparameter validation parameters...")
+        # 2. Chronological Train/Test Split
+        print("?? Splitting data structures into chronological sets...")
+        split_idx = int(len(df) * 0.85)
+        train_df = df.iloc[:split_idx]
+        val_df = df.iloc[split_idx:]
+
+        # Define explicit model input features and targets
+        features = [
+            'walmart_year_week', 'weekday_number', 'calendar_month', 'calendar_year',
+            'sales_lag_1d', 'sales_lag_7d', 'sales_lag_28d', 
+            'sales_rolling_avg_7d', 'sales_rolling_avg_30d', 'item_sell_price'
+        ]
+        target = 'log_daily_sales_units'
+
+        X_train, y_train = train_df[features], train_df[target]
+        X_val, y_val = val_df[features], val_df[target]
+
+        # 3. Initialize LightGBM Dataset objects
+        print("?? Compiling high-performance LightGBM Dataset matrix layers...")
+        train_data = lgb.Dataset(X_train, label=y_train)
+        val_data = lgb.Dataset(X_val, label=y_val, reference=train_data)
+
+        # Hyperparameter baseline definitions
         lgb_params = {
             'objective': 'regression',
             'metric': 'rmse',
@@ -33,20 +59,31 @@ def initialize_ml_pipeline(db_path="src_dbt/zaalima_warehouse.duckdb"):
             'learning_rate': 0.05,
             'num_leaves': 31,
             'max_depth': 6,
-            'feature_fraction': 0.8,
-            'bagging_fraction': 0.8,
-            'bagging_freq': 1,
             'verbose': -1,
             'n_jobs': -1
         }
-        
-        print("? Predictive modeling hyperparameters configured to structural baseline standard.")
-        print("\n?? Machine Learning Infrastructure Initialization Complete! Framework ready for full baseline loops.")
-        
+
+        # 4. Train the baseline loop model
+        print("?? Executing baseline model training iteration runs...")
+        model = lgb.train(
+            lgb_params,
+            train_data,
+            num_boost_round=50,
+            valid_sets=[train_data, val_data],
+            callbacks=[lgb.log_evaluation(period=10)]
+        )
+        print("? Baseline training loops successfully completed.")
+
+        # 5. Export compiled model binary file registry artifact
+        model_output_path = os.path.join(model_dir, "forecasting_baseline_v1.txt")
+        model.save_model(model_output_path)
+        print(f"?? Model registry artifact successfully saved to: {model_output_path}")
+        print("\n?? Pipeline complete! Ready for Review validation showcases!")
+
     except Exception as e:
-        print(f"?? Pipeline failure during model initialization: {e}")
+        print(f"?? Pipeline failure during model training: {e}")
     finally:
         conn.close()
 
 if __name__ == "__main__":
-    initialize_ml_pipeline()
+    run_baseline_training()
