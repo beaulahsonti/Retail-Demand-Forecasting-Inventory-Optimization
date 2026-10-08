@@ -1,0 +1,14 @@
+model_metadata:
+  name: "Zaalima Retail Demand Forecasting Engine"
+  version: "1.1.0"
+  framework: "LightGBM"
+
+baseline_tuning_parameters:
+  boosting_type: "gbdt"
+  objective: "regression"
+  metric: "rmse"
+  learning_rate: 0.03
+  num_leaves: 63
+  max_depth: 8
+  verbose: -1
+  n_jobs: -1
