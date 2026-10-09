@@ -1,3 +1,5 @@
+"""Print summary checks for the retail sales, calendar, and price data."""
+
 import duckdb
 
 DB_PATH = "data/retail.duckdb"
