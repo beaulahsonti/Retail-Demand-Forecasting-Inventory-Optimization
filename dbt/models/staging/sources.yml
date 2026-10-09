@@ -1,0 +1,13 @@
+version: 2
+
+sources:
+  - name: retail
+    description: "Retail forecasting and inventory datasets"
+    schema: retail_analytics
+
+    tables:
+      - name: inventory_analysis
+        description: "Inventory safety stock and reorder point analysis"
+
+      - name: model_comparison
+        description: "Forecasting model evaluation results"
